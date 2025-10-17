@@ -1,0 +1,88 @@
+.cardContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    top: 0%;
+    margin-top: 0px;
+    z-index: 0;
+}
+.homeCard{
+    color:black;
+    display: flex;
+    flex-direction: column;
+    padding:2px;
+    border-radius:10px;
+    background-color:white;
+    box-shadow: #6e6565 0px 5px 15px;
+    position: relative;
+    z-index: 1;
+    padding-top: 10px;
+    width:385px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    margin-left: 12px;
+    top:0;
+     margin-top: 0%;
+}
+@media screen and (min-width: 500px) {
+    .homeCard{
+        min-width: 1020px;
+        
+    }
+}
+.presentBtn{
+    font-size: large;
+    width:80px;
+    padding:10px;
+    margin-top:10px;
+    background-color:#4ac900;
+    color:white;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    margin-bottom: 10px;
+    border-radius:5px;
+     text-align: center;
+
+}
+.absentBtn{
+    font-size: large;
+    width:80px;
+    padding:10px;
+    margin-top:10px;
+    background-color:#f00808;
+    color:white;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    margin-bottom: 10px;
+    border-radius:5px;
+    text-align: center;
+}
+
+.row{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap:10px;
+
+}
+
+.emp-title{
+    font-weight:600;
+    font-size:22px;
+    align-items:left;
+   
+   
+}
+
+.homeCardLi{
+    list-style-type: number;
+    padding:0;
+    margin:5;
+}
+.input{
+    font-weight:600;
+    font-size:16px;
+    margin-bottom: 2px;  
+}

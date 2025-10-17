@@ -1,0 +1,8 @@
+.submitBtn{
+    background-color:rgba(0, 0, 255, 0.548);
+    color:#FFFFFF;
+    font-style:italic;
+    padding:10px;
+    border-radius: 10px;
+    margin:5px;
+}

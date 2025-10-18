@@ -14,7 +14,7 @@ export default function EmployeeCard({ emp, onMarked, onView }) {
     setStatusMsg(null)
     setLoading(true)
     try {
-      await request('/api/attendance/mark', { method: 'POST', body: { employeeId: emp._id, date, status } })
+      await request(`${API_URL}/api/attendance/mark`, { method: 'POST', body: { employeeId: emp._id, date, status } })
       setStatusMsg('Marked')
       onMarked && onMarked()
     } catch (err) {

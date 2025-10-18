@@ -4,6 +4,7 @@ import { request } from '../api'
 
 import Toast from '../components/Toast'
 import './Login.css'
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' })

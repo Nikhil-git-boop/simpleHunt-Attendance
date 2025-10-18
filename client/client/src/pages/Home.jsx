@@ -26,7 +26,7 @@ export default function Home() {
   async function loadEmployees() {
     setLoading(true)
     try {
-      const emps = await request(`${API_URL}/api/auth/employees`, { method: 'GET' })
+      const emps = await request(`${API_URL}/api/employees`, { method: 'GET' })
       setEmployees(emps)
     } catch (err) {
       console.error(err)

@@ -29,7 +29,7 @@ export default function Login() {
     setErrors(newErrors)
     if (Object.keys(newErrors).length) return
     try {
-      const data = await request('/api/auth/login', { method: 'POST', body: { email, password } })
+      const data = await request(`${API_URL}/api/auth/login`, { method: 'POST', body: { email, password } })
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
       setToast({ type: 'success', message: 'Login successful!' })

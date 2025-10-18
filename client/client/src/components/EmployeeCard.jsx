@@ -3,6 +3,7 @@ import { request } from '../api'
 import Button from './Button'
 
 import './EmployeeCard.css'
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function EmployeeCard({ emp, onMarked, onView }) {
   const [date, setDate] = useState(new Date().toISOString().slice(0,10))

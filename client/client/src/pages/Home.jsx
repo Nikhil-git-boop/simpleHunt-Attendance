@@ -8,6 +8,8 @@ import Modal from '../components/Modal'
 import { request } from '../api'
 
 import './Home.css'
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export default function Home() {
   const navigate = useNavigate()
@@ -24,7 +26,7 @@ export default function Home() {
   async function loadEmployees() {
     setLoading(true)
     try {
-      const emps = await request('/api/employees', { method: 'GET' })
+      const emps = await request(`${API_URL}/auth/employees`, { method: 'GET' })
       setEmployees(emps)
     } catch (err) {
       console.error(err)

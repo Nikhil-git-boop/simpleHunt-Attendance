@@ -25,7 +25,7 @@ export default function AddEmployee({ onAdded }) {
     if (err) return setError(err)
     setError('')
     try {
-      const emp = await request(`${API_URL}/api/employees`, { method: 'POST', body: { name } })
+      const emp = await request(`${API_URL}/api/auth/employees`, { method: 'POST', body: { name } })
       setToast({ type: 'success', message: 'Employee added!' })
       setName('')
       onAdded(emp)

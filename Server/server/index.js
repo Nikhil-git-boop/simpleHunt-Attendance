@@ -11,7 +11,12 @@ const attendanceRoutes = require('./routes/attendance');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://simplehunt-attendance-frontend.onrender.com',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));;
+app.options('*', cors())
 app.use(bodyParser.json());
 
 // Health check

@@ -27,7 +27,7 @@ export default function Register() {
     setErrors(errs)
     if (Object.keys(errs).length) return
     try {
-      await request('/api/auth/register', { method: 'POST', body: form })
+      await request(`${API_URL}/api/auth/register`, { method: 'POST', body: form })
       setToast({ type: 'success', message: 'Registered successfully!' })
       setTimeout(() => navigate('/login'), 1000)
     } catch {
@@ -42,7 +42,7 @@ export default function Register() {
           <form onSubmit={handleSubmit} className='formContainer'>
               <div className='labelInput' >
                <label htmlFor="name" className='cardLabel'>Name:</label>
-              <input   id='name' type="email" placeholder='Enter Name' className='inputBox'
+              <input   id='name' type="text" placeholder='Enter Name' className='inputBox'
                 value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
             </div>
              <div className='labelInput' >

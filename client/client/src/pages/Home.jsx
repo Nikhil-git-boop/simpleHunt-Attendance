@@ -62,7 +62,7 @@ export default function Home() {
     setError(null)
     const [y, m] = month.split('-')
     try {
-      const data = await request(`/api/attendance/stats?employeeId=${selected._id}&month=${m}&year=${y}`, { method: 'GET' })
+      const data = await request(`${API_URL}/api/attendance/stats?employeeId=${selected._id}&month=${m}&year=${y}`, { method: 'GET' })
       setStats(data.totals)
     } catch (err) {
       setError(err.message || 'Error fetching stats')

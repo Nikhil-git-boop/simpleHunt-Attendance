@@ -40,7 +40,7 @@ export default function Login() {
   }
 
   return (
-    <div className="container">
+   
      
         <div className='loginBg'>
        <div className="loginCard">
@@ -57,13 +57,13 @@ export default function Login() {
                onChange={(e)=>setPassword(e.target.value)} />
             </div>
              <button type='submit' className='loginBtn' >Login</button>
-            
+              {toast && <Toast {...toast} onClose={() => setToast(null)} />}
           </form>
        </div>
         <Link to='/register' className="links">Click here for Register</Link>
     </div>
       
-      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
-    </div>
+     
+   
   )
 }

@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const employeeSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+
+const employeeSchema = new Schema({
   employeeId: { type: String, required: true, unique: true },
-  phone: { type: String, required: true },
-  department: { type: String, required: true },
-  password: { type: String, required: true }
-});
+  name: { type: String, required: true },
+  phone: { type: String },
+  department: { type: String },
+  passwordHash: { type: String, required: true },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User' } // admin who created this employee
+}, { timestamps: true });
 
 // Hash password before saving
 employeeSchema.pre('save', async function (next) {

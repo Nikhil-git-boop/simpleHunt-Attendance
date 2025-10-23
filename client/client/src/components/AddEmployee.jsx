@@ -16,19 +16,27 @@ export default function AddEmployee() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await request(`${API_URL}/api/employees`, {
-        method: 'POST',
-        body: form
-      });
-      setMessage('✅ Employee added successfully!');
-      setForm({ name: '', employeeId: '', phone: '', department: '', password: '' });
-    } catch (err) {
-      setMessage(`❌ Error: ${err.message || 'Could not add employee'}`);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const adminId = localStorage.getItem('adminId'); // Or get from admin token
+    const res = await fetch(`${API_URL}/api/employees`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...form, createdBy: adminId })
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Could not add employee');
     }
-  };
+
+    setMessage('✅ Employee added successfully!');
+    setForm({ name: '', employeeId: '', phone: '', department: '', password: '' });
+  } catch (err) {
+    setMessage(`❌ Error: ${err.message}`);
+  }
+};
 
   return (
     <div className="add-employee-container">

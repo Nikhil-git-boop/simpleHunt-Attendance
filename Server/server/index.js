@@ -11,17 +11,25 @@ const attendanceRoutes = require('./routes/attendance');
 const app = express();
 
 // ✅ Middleware
+const allowedOrigins = [
+  'https://simplehunt-attendance-frontend.onrender.com',
+  'https://employee-side-app.onrender.com',
+  'http://localhost:5173'
+];
+
 app.use(cors({
-  origin: [
-    'https://simplehunt-attendance-frontend.onrender.com',
-    'https://employee-side-app.onrender.com',
-    'http://localhost:5173'
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`❌ CORS blocked origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
-
 
 app.options('*', cors());
 app.use(bodyParser.json());

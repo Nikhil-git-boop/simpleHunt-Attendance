@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-
+const Schema = mongoose.Schema;
 
 const employeeSchema = new Schema({
   name: { type: String, required: true },
@@ -12,17 +12,9 @@ const employeeSchema = new Schema({
   createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
-// Hash password before saving
-employeeSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
-});
-
-// Compare password method
+// Method to compare passwords
 employeeSchema.methods.comparePassword = async function (password) {
-  return bcrypt.compare(password, this.password);
+  return bcrypt.compare(password, this.passwordHash);
 };
 
 module.exports = mongoose.model('Employee', employeeSchema);

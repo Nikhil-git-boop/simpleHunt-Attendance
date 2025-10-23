@@ -58,6 +58,9 @@ router.post('/login', async (req, res) => {
 router.post('/employee-login', async (req, res) => {
   try {
     const { employeeId, password } = req.body;
+    if (!employeeId || !password)
+      return res.status(400).json({ message: 'Employee ID and password required' });
+
     const employee = await Employee.findOne({ employeeId });
     if (!employee) return res.status(400).json({ message: 'Invalid credentials' });
 
@@ -70,13 +73,12 @@ router.post('/employee-login', async (req, res) => {
       { expiresIn: process.env.TOKEN_EXPIRY || '7d' }
     );
 
-    res.json({ token, name: employee.name });
+    res.json({ token, name: employee.name, employeeId: employee.employeeId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 // Employee Change Password
 router.put('/employee/change-password', async (req, res) => {
   try {

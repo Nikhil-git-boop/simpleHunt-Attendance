@@ -42,7 +42,7 @@ export default function Login() {
       localStorage.setItem('adminId', data.user.id)
 
       setToast({ type: 'success', message: 'Login successful!' })
-      setTimeout(() => navigate('/admin-dashboard'), 1000)
+      setTimeout(() => navigate('/home'), 1000)
     } catch (err) {
       setToast({ type: 'error', message: err?.message || 'Invalid credentials' })
     }

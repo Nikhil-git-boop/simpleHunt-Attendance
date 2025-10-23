@@ -58,14 +58,33 @@ router.post('/login', async (req, res) => {
 router.post('/employee-login', async (req, res) => {
   try {
     const { employeeId, password } = req.body;
-    if (!employeeId || !password)
-      return res.status(400).json({ message: 'Employee ID and password required' });
 
+    // Check required fields
+    if (!employeeId || !password) {
+      return res.status(400).json({ message: 'Employee ID and password are required' });
+    }
+
+    // Find employee
     const employee = await Employee.findOne({ employeeId });
-    if (!employee) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!employee) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
 
+    // Check if passwordHash exists
+    if (!employee.passwordHash) {
+      return res.status(500).json({ message: 'Password not set for this employee. Contact admin.' });
+    }
+
+    // Compare password
     const match = await bcrypt.compare(password, employee.passwordHash);
-    if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!match) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Sign JWT token
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'Server misconfigured: missing JWT secret' });
+    }
 
     const token = jwt.sign(
       { id: employee._id, role: 'employee' },
@@ -73,12 +92,18 @@ router.post('/employee-login', async (req, res) => {
       { expiresIn: process.env.TOKEN_EXPIRY || '7d' }
     );
 
-    res.json({ token, name: employee.name, employeeId: employee.employeeId });
+    // Return token and employee info
+    res.json({
+      token,
+      name: employee.name,
+      employeeId: employee.employeeId
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Employee login error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
 // Employee Change Password
 router.put('/employee/change-password', async (req, res) => {
   try {

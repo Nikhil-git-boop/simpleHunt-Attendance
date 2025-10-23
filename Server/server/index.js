@@ -14,7 +14,7 @@ const app = express();
 app.use(cors({
   origin: [
     'https://simplehunt-attendance-frontend.onrender.com', // admin frontend
-    'https://employeeclient.onrender.com',                 // employee frontend (once deployed)
+    'https://employee-side-app.onrender.com',              // employee frontend (once deployed)
     'http://localhost:5173'                                // local testing
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

@@ -19,11 +19,16 @@ export default function AddEmployee() {
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const adminId = localStorage.getItem('adminId'); // Or get from admin token
+    const token = localStorage.getItem('adminToken'); // Make sure this is saved at admin login
+    if (!token) throw new Error('Admin not logged in');
+
     const res = await fetch(`${API_URL}/api/employees`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, createdBy: adminId })
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`, // Send token here
+      },
+      body: JSON.stringify(form)
     });
 
     if (!res.ok) {
@@ -37,6 +42,7 @@ const handleSubmit = async (e) => {
     setMessage(`❌ Error: ${err.message}`);
   }
 };
+
 
   return (
     <div className="add-employee-container">

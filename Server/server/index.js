@@ -13,14 +13,15 @@ const app = express();
 // ✅ Middleware
 app.use(cors({
   origin: [
-    'https://simplehunt-attendance-frontend.onrender.com', // admin frontend
-    'https://employee-side-app.onrender.com',              // employee frontend (once deployed)
-    'http://localhost:5173'                                // local testing
+    'https://simplehunt-attendance-frontend.onrender.com',
+    'https://employee-side-app.onrender.com',
+    'http://localhost:5173'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
+
 
 app.options('*', cors());
 app.use(bodyParser.json());

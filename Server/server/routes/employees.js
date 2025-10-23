@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth'); // add auth middleware if needed
 const Employee = require('../models/Employee');
 
 // ✅ Admin adds a new employee
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const { name, employeeId, phone, department, password } = req.body;
 
-    // Check all fields
+    // Check all required fields
     if (!name || !employeeId || !phone || !department || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
@@ -18,13 +19,14 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Employee ID already exists' });
     }
 
-    // Create new employee
+    // Create new employee with temporary password field
     const employee = new Employee({
       name,
       employeeId,
       phone,
       department,
-      password, // Will be hashed automatically by model
+      passwordPlain: password, // will be hashed automatically by model
+      createdBy: req.user.id   // link to admin
     });
 
     await employee.save();
@@ -36,9 +38,9 @@ router.post('/', async (req, res) => {
 });
 
 // ✅ Get all employees (for admin dashboard)
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
-    const employees = await Employee.find().sort({ createdAt: -1 });
+    const employees = await Employee.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
     res.json(employees);
   } catch (error) {
     console.error('Error fetching employees:', error);

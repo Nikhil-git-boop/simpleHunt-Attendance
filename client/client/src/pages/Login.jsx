@@ -19,4 +19,31 @@ export default function Login() {
         else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Invalid email' 
           if (!password) newErrors.password = 'Password required' 
             return newErrors } 
-    const handleSubmit = async (e) => { e.preventDefault() const newErrors = validate() setErrors(newErrors) if (Object.keys(newErrors).length) return try { const data = await request(${API_URL}/api/auth/login, { method: 'POST', body: { email, password } }) localStorage.setItem('token', data.token) localStorage.setItem('user', JSON.stringify(data.user)) setToast({ type: 'success', message: 'Login successful!' }) setTimeout(() => navigate('/home'), 1000) } catch { setToast({ type: 'error', message: 'Invalid credentials' }) } } return ( <div className='loginBg'> <div className="loginCard"> <h1 className='loginH1 ' >Simple<span className='spanH1'>Hunt</span></h1> <form onSubmit={handleSubmit} className='formContainer'> <div className='labelInput' > <label htmlFor="username" className='cardLabel'>Email:</label> <input id='username' type="email" placeholder='Enter Username' className='inputBox' onChange={(e)=>setEmail(e.target.value)} /> </div> <div className='labelInput'> <label className='cardLabel' htmlFor="password">Password:</label> <input type="password" placeholder='Enter Password' className='inputBox' onChange={(e)=>setPassword(e.target.value)} /> </div> <button type='submit' className='loginBtn' >Login</button> {toast && <Toast {...toast} onClose={() => setToast(null)} />} </form> </div> <Link to='/register' className="links">Click here for Register</Link> </div> ) }
+    const handleSubmit = async (e) => { 
+      e.preventDefault() 
+        const newErrors = validate()
+          setErrors(newErrors)
+            if (Object.keys(newErrors).length)
+              return try { 
+              const data = await request(${API_URL}/api/auth/login, { method: 'POST', body: { email, password } })
+                localStorage.setItem('token', data.token) 
+                  localStorage.setItem('user', JSON.stringify(data.user)) 
+                    setToast({ type: 'success', message: 'Login successful!' }) 
+                      setTimeout(() => navigate('/home'), 1000) }
+            catch { setToast({ type: 'error', message: 'Invalid credentials' }) } } 
+      return ( 
+        <div className='loginBg'>
+          <div className="loginCard"> 
+            <h1 className='loginH1 ' >Simple<span className='spanH1'>Hunt</span></h1> 
+            <form onSubmit={handleSubmit} className='formContainer'>
+              <div className='labelInput' > 
+                <label htmlFor="username" className='cardLabel'>Email:</label> 
+                <input id='username' type="email" placeholder='Enter Username' className='inputBox' onChange={(e)=>setEmail(e.target.value)} />
+              </div> <div className='labelInput'> 
+                <label className='cardLabel' htmlFor="password">Password:</label>
+                <input type="password" placeholder='Enter Password' className='inputBox' onChange={(e)=>setPassword(e.target.value)} /> </div> 
+              <button type='submit' className='loginBtn' >Login</button> 
+              {toast && <Toast {...toast} onClose={() => setToast(null)} />} 
+            </form> 
+          </div> 
+          <Link to='/register' className="links">Click here for Register</Link> </div> ) }

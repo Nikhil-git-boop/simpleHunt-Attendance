@@ -1,48 +1,47 @@
-import React, { useState } from 'react'
-import { request } from '../api'
-import Button from './Button'
-import Input from './Input'
-import Toast from './Toast'
-import Card from './Card'
-
-import './AddEmployee.css'
+import React, { useState } from 'react';
+import { request } from '../api'; // Make sure this points to your API helper
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function AddEmployee({ onAdded }) {
-  const [name, setName] = useState('')
-  const [error, setError] = useState('')
-  const [toast, setToast] = useState(null)
+export default function AddEmployee() {
+  const [form, setForm] = useState({
+    name: '',
+    employeeId: '',
+    phone: '',
+    department: '',
+    password: ''
+  });
+  const [message, setMessage] = useState('');
 
-  const validate = () => {
-    if (!name.trim()) return 'Employee name is required'
-    if (name.length < 2) return 'Name must be at least 2 characters'
-    return ''
-  }
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    const err = validate()
-    if (err) return setError(err)
-    setError('')
+    e.preventDefault();
     try {
-      const emp = await request(`${API_URL}/api/employees`, { method: 'POST', body: { name } })
-      setToast({ type: 'success', message: 'Employee added!' })
-      setName('')
-      onAdded(emp)
-    } catch {
-      setToast({ type: 'error', message: 'Error adding employee' })
+      await request(`${API_URL}/api/employees`, {
+        method: 'POST',
+        body: form
+      });
+      setMessage('✅ Employee added successfully!');
+      setForm({ name: '', employeeId: '', phone: '', department: '', password: '' });
+    } catch (err) {
+      setMessage(`❌ Error: ${err.message || 'Could not add employee'}`);
     }
-  }
+  };
 
   return (
-    <Card>
-      <h3>Add Employee</h3>
+    <div className="add-employee-container">
+      <h2>Add New Employee</h2>
       <form onSubmit={handleSubmit}>
-        <Input value={name} onChange={e => setName(e.target.value)} placeholder="Employee name" error={error} />
-        <Button className="submitBtn">Add</Button>
+        <input name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
+        <input name="employeeId" placeholder="Employee ID" value={form.employeeId} onChange={handleChange} required />
+        <input name="phone" placeholder="Phone" value={form.phone} onChange={handleChange} required />
+        <input name="department" placeholder="Department" value={form.department} onChange={handleChange} required />
+        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+        <button type="submit">Add Employee</button>
       </form>
-      {toast && <Toast {...toast} onClose={() => setToast(null)} />}
-    </Card>
-  )
+      {message && <p>{message}</p>}
+    </div>
+  );
 }
-

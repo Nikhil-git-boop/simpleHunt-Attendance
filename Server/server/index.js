@@ -10,26 +10,32 @@ const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
 
-// Middleware
+// ✅ Middleware
 app.use(cors({
-  origin: 'https://simplehunt-attendance-frontend.onrender.com',
+  origin: [
+    'https://simplehunt-attendance-frontend.onrender.com', // admin frontend
+    'https://employeeclient.onrender.com',                 // employee frontend (once deployed)
+    'http://localhost:5173'                                // local testing
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));;
-app.options('*', cors())
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
+app.options('*', cors());
 app.use(bodyParser.json());
 
-// Health check
+// ✅ Health check
 app.get('/', (req, res) => {
   res.send('Server is running ✅');
 });
 
-// API Routes
+// ✅ API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
-// Server + DB
+// ✅ Server + DB
 const PORT = process.env.PORT || 10000;
 
 mongoose.connect(process.env.MONGO_URI)

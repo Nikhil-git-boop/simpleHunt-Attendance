@@ -3,6 +3,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Employee = require('../models/Employee');
+const Attendance = require('../models/Attendance');
 
 router.post('/register', async (req, res) => {
   try {
@@ -36,5 +38,21 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// Employee login
+router.post('/employee-login', async (req, res) => {
+try {
+const { employeeId, password } = req.body;
+const employee = await Employee.findOne({ employeeId });
+if (!employee) return res.status(400).json({ message: 'Invalid credentials' });
+
+const match = await bcrypt.compare(password, employee.password);
+if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+
+const token = jwt.sign(
+{ id: employee._id, role: 'employee' },
+process.env.JWT_SECRET,
+{ expiresIn: process.env.TOKEN_EXPIRY ||
+
 
 module.exports = router;

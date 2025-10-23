@@ -1,81 +1,78 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const Attendance = require('../models/Attendance');
-const mongoose = require('mongoose');
+const Employee = require('../models/Employee');
+const auth = require('../middleware/auth');
 
+// Define your office coordinates
+const OFFICE_LAT = 12.9716;  // example: Bangalore latitude
+const OFFICE_LON = 77.5946;  // example: Bangalore longitude
+const ALLOWED_RADIUS_METERS = 150; // radius for marking attendance
+
+// Utility: Haversine formula to calculate distance between two GPS coordinates
+function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000; // Radius of Earth in meters
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+      Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// POST /api/attendance/mark
 router.post('/mark', auth, async (req, res) => {
   try {
-    const { employeeId, date, status } = req.body;
-    if (!employeeId || !date || !status) 
-      return res.status(400).json({ message: 'Missing fields' });
-
-    const d = new Date(date);
-
-    // Normalize date to midnight for uniqueness
-    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-    // ✅ FIX: No mongoose.Types.ObjectId
-    const exists = await Attendance.findOne({
-      employee: employeeId,
-      date: dayStart
-    });
-
-    if (exists) 
-      return res.status(400).json({ message: 'Already marked for this date' });
-
-    const rec = new Attendance({
-      employee: employeeId,
-      date: dayStart,
-      status,
-      createdBy: req.user.id
-    });
-
-    await rec.save();
-    res.json({ message: 'Marked', attendance: rec });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// get monthly stats for an employee
-router.get('/stats', auth, async (req, res) => {
-  try {
-    const { employeeId, month, year } = req.query;
-    if (!employeeId || !month || !year) {
-      return res.status(400).json({ message: 'employeeId, month & year required' });
+    const { latitude, longitude } = req.body;
+    if (!latitude || !longitude) {
+      return res.status(400).json({ message: 'Location access required' });
     }
 
-    const m = parseInt(month, 10) - 1;
-    const y = parseInt(year, 10);
-    const start = new Date(y, m, 1);
-    const end = new Date(y, m + 1, 1);
+    // Calculate distance from office
+    const distance = getDistanceFromLatLonInMeters(
+      OFFICE_LAT,
+      OFFICE_LON,
+      latitude,
+      longitude
+    );
 
-    const agg = await Attendance.aggregate([
-      { 
-        $match: { 
-          employee: new mongoose.Types.ObjectId(employeeId), 
-          date: { $gte: start, $lt: end } 
-        } 
-      },
-      { $group: { _id: "$status", count: { $sum: 1 } } }
-    ]);
+    if (distance > ALLOWED_RADIUS_METERS) {
+      return res.status(403).json({
+        message: `You are outside the allowed area (${Math.round(distance)}m away from office).`,
+      });
+    }
 
-    const result = { present: 0, absent: 0 };
-    agg.forEach(x => {
-      const key = (x._id || "").toLowerCase();
-      if (key === "present") result.present = x.count;
-      if (key === "absent") result.absent = x.count;
+    const employeeId = req.user.id; // From JWT
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Prevent duplicate marking
+    const existing = await Attendance.findOne({
+      employee: employeeId,
+      date: today,
     });
 
-    res.json({ month, year, totals: result });
+    if (existing) {
+      return res.status(400).json({ message: 'Attendance already marked today' });
+    }
+
+    const attendance = new Attendance({
+      employee: employeeId,
+      date: today,
+      status: 'present',
+      createdBy: req.user.id,
+    });
+    await attendance.save();
+
+    res.json({ message: 'Attendance marked successfully!' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
-
 
 module.exports = router;

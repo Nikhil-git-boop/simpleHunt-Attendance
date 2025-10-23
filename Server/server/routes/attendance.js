@@ -5,9 +5,9 @@ const Employee = require('../models/Employee');
 const auth = require('../middleware/auth');
 
 // Define your office coordinates
-const OFFICE_LAT = 12.9716;  // example: Bangalore latitude
-const OFFICE_LON = 77.5946;  // example: Bangalore longitude
-const ALLOWED_RADIUS_METERS = 150; // radius for marking attendance
+const OFFICE_LAT = 12.997177;  // example: Bangalore latitude
+const OFFICE_LON = 77.660501;  // example: Bangalore longitude
+const ALLOWED_RADIUS_METERS = 50; // radius for marking attendance
 
 // Utility: Haversine formula to calculate distance between two GPS coordinates
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {

@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Employee = require('../models/Employee');
 const Attendance = require('../models/Attendance');
 
+
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -54,5 +55,31 @@ const token = jwt.sign(
 process.env.JWT_SECRET,
 { expiresIn: process.env.TOKEN_EXPIRY ||
 
+// Change Employee Password
+router.put('/employee/change-password', async (req, res) => {
+  try {
+    const { employeeId, oldPassword, newPassword } = req.body;
+
+    if (!employeeId || !oldPassword || !newPassword)
+      return res.status(400).json({ message: 'All fields are required' });
+
+    const employee = await Employee.findOne({ employeeId });
+    if (!employee)
+      return res.status(404).json({ message: 'Employee not found' });
+
+    const isMatch = await bcrypt.compare(oldPassword, employee.passwordHash);
+    if (!isMatch)
+      return res.status(400).json({ message: 'Incorrect old password' });
+
+    const salt = await bcrypt.genSalt(10);
+    employee.passwordHash = await bcrypt.hash(newPassword, salt);
+    await employee.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 module.exports = router;

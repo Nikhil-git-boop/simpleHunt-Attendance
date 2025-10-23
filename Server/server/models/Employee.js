@@ -12,17 +12,16 @@ const employeeSchema = new Schema({
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
-// Pre-save hook to hash password
+// Pre-save hook to hash password if a new plain password is provided
 employeeSchema.pre('save', async function(next) {
-  if (this.isModified('passwordPlain')) {
+  if (this.isModified('passwordHash') && !this.passwordHash.startsWith('$2')) {
     const salt = await bcrypt.genSalt(10);
-    this.passwordHash = await bcrypt.hash(this.passwordPlain, salt);
-    this.passwordPlain = undefined;
+    this.passwordHash = await bcrypt.hash(this.passwordHash, salt);
   }
   next();
 });
 
-// Method to compare password
+// Compare password method
 employeeSchema.methods.comparePassword = async function(password) {
   return bcrypt.compare(password, this.passwordHash);
 };

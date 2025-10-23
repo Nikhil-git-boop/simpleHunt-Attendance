@@ -14,7 +14,7 @@ const employeeSchema = new Schema({
 
 // Method to compare passwords
 employeeSchema.methods.comparePassword = async function (password) {
-  return bcrypt.compare(password, this.passwordHash);
+  return bcrypt.compare(password, this.password);
 };
 
 module.exports = mongoose.model('Employee', employeeSchema);

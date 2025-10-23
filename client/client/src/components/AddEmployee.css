@@ -1,8 +1,38 @@
-.submitBtn{
-    background-color:rgba(0, 0, 255, 0.548);
-    color:#FFFFFF;
-    font-style:italic;
-    padding:10px;
-    border-radius: 10px;
-    margin:5px;
+.add-employee-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.add-employee-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.add-employee-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-employee-container input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.add-employee-container button {
+  padding: 10px;
+  background-color: #2a7cff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-employee-container button:hover {
+  background-color: #1e64d6;
 }
